@@ -22,103 +22,70 @@
 
 <div id="app">
     <h1>新增业务</h1>
-    <form action="" method="post">
-        业务类型：<select name="" id="typeSelect" v-model="">
-        <option value="1">信用卡</option>
-        <option value="2">储蓄卡</option>
-        <option value="3">vip卡</option>
+    <form action="" method="post" @submit.prevent="onSubmit" id="MyForm">
+        业务类型：<select  id="typeSelect"  v-model="tBusiness.btype">
+        <option :value="item.typeName" v-for="(item,index) in tType ">{{item.typeName}}</option>
     </select>
         <br>
-        排队号：<input type="text" name="" ><br>
-        备注信息：<textarea name=""  cols="30" rows="10"></textarea>
+        排队号：<input type="text" v-model="tBusiness.bnum" ><br>
+        备注信息：<textarea cols="30" rows="10" v-model="tBusiness.bmark"></textarea>
         <br>
         <input type="submit" value="确认增加">
     </form>
 
-    <div>
-        <%--请选择你的英雄：--%>
-        <%--<select name="" id="heroSelect">--%>
-            <%--<option value="1">韩信</option>--%>
-            <%--<option value="2">赵云</option>--%>
-            <%--<option value="3">小乔</option>--%>
-        <%--</select>--%>
-    </div>
 
 </div>
 
 <script>
-    //http://localhost:8080/type/selectAll$(function () {
-    //     //使用高级版的ajax，axios 异步请求
-    //     // 为给定 ID 的 user 创建请求
-    //     axios.get('/type/selectAll')
-    //         .then(function (response) { //ajax中的success
-    //             console.log(response.data.data); //vue!!!
-    //             // $("#typeSelect").empty();
-    //             // $.each(response.data.data,function (index, item) {
-    //             //    var typeName=(item.typeName);
-    //             //    var optionDom=$("<option value='1'>"+typeName+"</option>");
-    //             //    $("#typeSelect").append(optionDom); //ajax 异步下拉框
-    //             // })
-    //         })
-    //         .catch(function (error) {   //ajax中的error
-    //             console.log(error);
-    //         });
-    //     // $.ajax({
-    //     //     url:'/type/selectAll',
-    //     //     type:'get',
-    //     //     dataType:'json',
-    //     //     success:function (r) {
-    //     //         console.log(r.data)
-    //     //         $("#typeSelect").empty();//把下拉框下面的数据清空
-    //     //         //给id为typeSelect 渲染数据
-    //     //         $.each(r.data,function (index, item) {
-    //     //            var typeName=(item.typeName);
-    //     //            var optionDom=$("<option value='1'>"+typeName+"</option>");
-    //     //            $("#typeSelect").append(optionDom); //ajax 异步下拉框
-    //     //             //
-    //     //         })
-    //     //     }
-    //     // });
-    //
-    //     //jquery的数据遍历！！！ $.each(数组，方法（数组索引，具体的数组中的值）{方法执行的体 })
-    //     //     var names=new Array();  //List<String> names=new ArrayList();
-    //     //     names.push("唐僧");
-    //     //     names.push("悟空");
-    //     //     names.push("八戒");
-    //     //     names.push("沙僧");
-    //     //     names.push("白龙");
-    //     //     console.log(names);
-    //     //     $("#heroSelect").empty();
-    //     //     $.each(names,function (index,value) {
-    //     //         console.log(index);
-    //     //         console.log(value)
-    //     //         console.log("-------------")
-    //     //         $("#heroSelect").append("<option value='3'>"+value+"</option>")
-    //     //         //作业:写一个葫芦娃的数组，
-    //     //         //ul --- li,把以上葫芦娃的数据遍历到里面
-    //     //     });
-    //     //
-    //
-    //
-    //})
 
     //使用 vue和axios发送请求
    var vm = new Vue({
       el:'#app',
       data:{
-          tType:[]
-      },
-      created:{
-          // 为给定 ID 的 user 创建请求
-          axios.get('/type/selectAll')
-              .then(function (response) {
-                  console.log(response);
-              })
-              .catch(function (error) {
-                  console.log(error);
-              })
+          tType:[],
+          tBusiness:{
 
-    },
+          }
+      },
+        created:function(){
+         //官网提供的这个api是结合jQuery的ajax用的,不是结合vue函数用的
+         //那么就需要用到我们的es中的箭头函数来处理
+         //在es6中,箭头函数是一个缩写,但是功能很强大,可以解决异步渲染的问题
+         //写法: ()=>{} 小括号等价于大括弧
+        axios.get("/type/selectAll").then( (response)=>{
+            this.tType = response.data.data;
+        })
+
+        },
+       methods:{
+           onSubmit:function (e) {
+               //凡是事件都有个e
+               console.log(e)
+               console.log(e.target)//vue的事件可以通过 e.target拿到标签中的dom元素
+
+               var form = document.getElementById('MyForm');
+               console.log(form)
+
+               //拿去form表单中的数据
+               //var formData = new FormData(form);
+               //var formData = new FormData(e.target);
+               //console.log(formData.get('adminName')) //脱离了jQuery
+               //引入axios,写个ajax通过post发送到百度
+               console.log(this.tBusiness)
+               axios.post('/tBusiness/insert',{
+                  bmark:this.tBusiness.bmark,
+                  btype:this.tBusiness.btype,
+                  bnum:this.tBusiness.bnum
+               }).then((response)=>{
+                       if(response.data.code==0){
+                           alert(response.data.msg)
+               }else{
+                   alert("添加失败")
+                    }
+               })
+               return false;
+           }
+       }
    });
 
 

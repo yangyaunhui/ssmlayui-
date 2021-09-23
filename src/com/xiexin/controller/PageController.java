@@ -45,6 +45,10 @@ public class PageController {
         return "vuedemo004";
     }
 
-
+    //箭头函数
+    @RequestMapping("/jiantouhanshu")
+    public String jiantouhanshu() {
+        return "jiantouhanshu";
+    }
 
 }

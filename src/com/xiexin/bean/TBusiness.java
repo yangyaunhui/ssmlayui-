@@ -48,4 +48,14 @@ public class TBusiness implements Serializable {
     public void setBmark(String bmark) {
         this.bmark = bmark;
     }
+
+    @Override
+    public String toString() {
+        return "TBusiness{" +
+                "bid=" + bid +
+                ", bnum='" + bnum + '\'' +
+                ", btype='" + btype + '\'' +
+                ", bmark='" + bmark + '\'' +
+                '}';
+    }
 }
